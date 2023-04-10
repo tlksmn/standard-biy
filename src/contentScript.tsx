@@ -82,11 +82,11 @@ function App() {
         }
       })
       setDataCounter((prev) => prev + 1);
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(0)
-        }, 100)
-      })
+      // await new Promise((resolve) => {
+      //   setTimeout(() => {
+      //     resolve(0)
+      //   }, 100)
+      // })
     }
   }
 
@@ -153,7 +153,6 @@ function ActivateForm(props: ActivationFormProps) {
     event.preventDefault();
     const codeValue = activationCodeRef.current!.value;
     setFetchState(true);
-    console.log(regExp.test(codeValue))
     if (codeValue.length > 10 && regExp.test(codeValue)) {
       axios.request({
         url: `${API_URL}/activate`,
