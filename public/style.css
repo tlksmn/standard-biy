@@ -1,0 +1,10 @@
+#biy-root{
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding: 1em;
+  background: white;
+  z-index: 99999;
+  min-width: 20em;
+  width: 21em;
+}

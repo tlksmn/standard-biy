@@ -17,17 +17,14 @@
     "default_popup": "popup.html"
   },
   "permissions": [
-    "storage"
+    "storage", "scripting", "tabs"
   ],
   "content_scripts": [
     {
-      "matches": [
-        "<all_urls>"
-      ],
-      "run_at": "document_idle",
-      "js": [
-        "contentScript.js"
-      ]
+      "matches": ["https://kaspi.kz/shop/p/*"],
+      "js": ["contentScript.js"],
+      "css": ["style.css"]
     }
-  ]
+  ],
+  "host_permissions": ["https://kaspi.kz/", "https://ext.biy.kz/"]
 }

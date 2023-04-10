@@ -33,6 +33,10 @@ const common = {
         test: /\.ts$/,
         use: ['ts-loader'],
       },
+      {
+        test: /\.tsx?$/,
+        use: ['ts-loader'],
+      },
       // Help webpack in understanding CSS files imported in .js files
       {
         test: /\.css$/,
