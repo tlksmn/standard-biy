@@ -1,10 +1,40 @@
 #biy-root{
   position: fixed;
   bottom: 0;
+  overflow-x: auto;
+  overflow-y: auto;
   right: 0;
   padding: 1em;
-  background: white;
+  color: #393b3b;
+  background: #f8f8f8;
+  border-top: 1px solid blue;
+  border-left: 1px solid blue;
   z-index: 99999;
-  min-width: 20em;
-  width: 21em;
+  max-width: 30em;
+  width: 29em;
+  height: 19em;
+  max-height: 20em;
+}
+#biy-root #app .error{
+  color: red;
+  padding: 0;
+  background: none;
+}
+#biy-root #app .info{
+  color: blue;
+  text-decoration: underline;
+  padding-top: 0.8em;
+}
+
+#biy-root #app .seller-list-container{
+  padding-bottom: 1em;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+#biy-root #app .loader svg{
+  width:10em;
+  height:6em;
 }
