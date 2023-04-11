@@ -4,12 +4,24 @@ import {createRoot} from "react-dom/client";
 
 import {
   ActivateApiData,
-  ActivationFormProps, ApiError, ApiRivalConfigResponseI,
-  AppStateInterface, PriceListApiT, SellerInterface, SellerProps,
+  ActivationFormProps,
+  ApiError,
+  ApiRivalConfigResponseI,
+  AppStateInterface,
+  PriceListApiT,
+  ProductAnalyzerStateI,
+  SellerInterface,
+  SellerProps,
   SellersListProps
 } from "./types";
 
-const API_URL = 'http://localhost:3001'
+//---- biy-ext-standard-start
+/***
+ *
+ *
+ * */
+const API_URL = 'http://localhost:3001';
+const storageName = 'BIY_STANDARD_EXT';
 
 function App() {
   const [fetchQueueState, setFetchQueueState] = useState<boolean>(false);
@@ -28,6 +40,20 @@ function App() {
     isAvailable: false,
     sellers: []
   });
+
+  useEffect(() => {
+    (async function InitializeApp() {
+      const data: AppStateInterface = await chrome.storage.local.get(storageName).then((value) => value[storageName] || {})
+      setAppState(data);
+    })().then()
+  }, [])
+
+  useEffect(() => {
+    (async function saveAppStateToLocalStorage() {
+      await chrome.storage.local.set({BIY_STANDARD_EXT: appState})
+      const data = await chrome.storage.local.get(storageName)
+    })().then()
+  }, [appState])
 
   function setDefaultConfig() {
     setSelectedSeller({
@@ -52,6 +78,7 @@ function App() {
         })
     }
   }, [fetchQueueState, selectedSellerState])
+
 
   async function fetchData(data: ApiRivalConfigResponseI) {
     if (data.total < 1) return;
@@ -82,11 +109,11 @@ function App() {
         }
       })
       setDataCounter((prev) => prev + 1);
-      // await new Promise((resolve) => {
-      //   setTimeout(() => {
-      //     resolve(0)
-      //   }, 100)
-      // })
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(0)
+        }, 200)
+      })
     }
   }
 
@@ -134,7 +161,7 @@ function App() {
         <div className='info'>Идёт интеграция; Пожалуйста ждите-)</div>
         {dataToFetch?.total! > 0 && <div>
           <div>Всего {dataToFetch?.total} товаров будет обновлено))</div>
-          <div style={{'color': 'red'}}>Уже обновлено {dataCounter}</div>
+          <div style={{'color': 'green'}}>Уже обновлено {dataCounter}</div>
         </div>}
         <LoaderComponent/>
       </div>
@@ -182,7 +209,7 @@ function ActivateForm(props: ActivationFormProps) {
           }, 4_000);
         })
     } else {
-      setChanceCount((val)=> val+1)
+      setChanceCount((val) => val + 1)
       setErrorState(true);
       setFetchState(false);
     }
@@ -190,7 +217,7 @@ function ActivateForm(props: ActivationFormProps) {
   return <form onSubmit={onActivateFormSubmit}>
     <label htmlFor="activationCode">Код активации</label>
     <input id="activationCode" ref={activationCodeRef} type='text'/>
-    <button className='button' disabled={fetchState || chanceCount>4}
+    <button className='button' disabled={fetchState || chanceCount > 4}
             type="submit">Активировать
     </button>
     {
@@ -276,12 +303,66 @@ function SellerComponent(props: SellerProps) {
   )
 }
 
+/***
+ *
+ *
+ * */
+//---- biy-ext-standard-end
+
+//---- biy-ext-default-start
+/***
+ *
+ *
+ * */
+function ApplicationProductAnalyzer() {
+  const [productState, setProductState] = useState<ProductAnalyzerStateI>();
+  const [productFetchState, setFetchState] = useState<PriceListApiT>();
+
+  useEffect(()=> {
+    //--todo
+    //
+    //initialize application data such as productId, cityId, category
+    //should use window native functions
+    //
+    //--todo
+  }, [])
+
+  useEffect(()=> {
+    //--todo
+    //
+    //do fetch to api, if productState would update
+    //
+    //--todo
+  }, [productState])
+
+  return <div>
+    <div>Hello, it's product analyzer chrome extension;)</div>
+  </div>
+}
+/***
+ *
+ *
+ * */
+//---- biy-ext-default-start
+
 function main() {
-  const temp = document.createElement('div');
-  temp.setAttribute('id', 'biy-root');
-  const rootDiv = document.body.appendChild(temp)
-  const reactRoot = createRoot(rootDiv)
-  reactRoot.render(<App/>)
+  const rootHtml = document.createElement('div');
+  rootHtml.setAttribute('id', 'biy-ext');
+  const RootAppendedHtml = document.body.appendChild(rootHtml);
+
+  const BiyStandardExtRoot = document.createElement('div');
+  BiyStandardExtRoot.setAttribute('id', 'biy-ext-standard-root')
+  BiyStandardExtRoot.setAttribute('class', 'ext')
+  RootAppendedHtml.appendChild(BiyStandardExtRoot);
+  const reactRoot = createRoot(BiyStandardExtRoot);
+  reactRoot.render(<App/>);
+
+  const BiyProductAnalyzerRoot = document.createElement('div');
+  BiyProductAnalyzerRoot.setAttribute('id', 'biy-ext-prod-calc-analyzer');
+  BiyProductAnalyzerRoot.setAttribute('class', 'ext')
+  RootAppendedHtml.appendChild(BiyProductAnalyzerRoot);
+  const reactSecondRoot = createRoot(BiyProductAnalyzerRoot);
+  reactSecondRoot.render(<ApplicationProductAnalyzer/>);
 }
 
 main()

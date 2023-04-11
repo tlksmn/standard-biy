@@ -105,3 +105,9 @@ export type ProductSellerT = {
   preorder: number;
   price: number;
 };
+
+export interface ProductAnalyzerStateI {
+  productSku: string;
+  cityId: string;
+  category: string[];
+}
