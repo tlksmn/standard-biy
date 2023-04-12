@@ -6,6 +6,6 @@
     "esModuleInterop": true,
     "strict": true,
     "jsx": "react",
-    "sourceMap": false
+    "sourceMap": false,
   }
 }

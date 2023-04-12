@@ -52,3 +52,7 @@
   top: 2em;
   border-bottom: 1px solid blue;
 }
+#biy-ext-prod-calc-analyzer .productContainer{
+  display: flex;
+  flex-direction: column;
+}

@@ -108,6 +108,23 @@ export type ProductSellerT = {
 
 export interface ProductAnalyzerStateI {
   productSku: string;
+  productName: string;
   cityId: string;
   category: string[];
 }
+export interface City {
+  id: number;
+  cityRus: string;
+}
+
+export interface PercentData {
+  "1": string,
+  "2": string
+  "3"?: string
+  percent: string
+}
+
+export interface PercentDataApi {
+  percents: PercentData[]
+}
+
