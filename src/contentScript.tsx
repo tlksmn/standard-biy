@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosHeaders, InternalAxiosRequestConfig} from "axios";
 import React, {
   ChangeEvent,
   FormEvent,
@@ -32,9 +32,31 @@ export function percentInt(per: string): number {
   return parseInt(temp);
 }
 
+function makeId(length: number): string {
+  let result = '';
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789_';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
+
+function randomIntFromInterval(min: number, max: number): number { // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 //--lib-start to fetch current product
 function getProductInfo(sku: string, cityId: string): Promise<PriceListApiT & ApiError> {
-  return axios.request({
+  const newAxiosInstance = axios.create();
+
+  newAxiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig)=> {
+    config.headers['Referer'] =  `https://kaspi.kz/shop/p/${makeId(randomIntFromInterval(12, 22))}-${sku}/?c=${cityId}`
+    return config
+  });
+  return newAxiosInstance.request({
     url: `https://kaspi.kz/yml/offer-view/offers/${sku}`,
     method: 'post',
     data: {
@@ -43,10 +65,9 @@ function getProductInfo(sku: string, cityId: string): Promise<PriceListApiT & Ap
       merchantUID: "",
       limit: 10,
       page: 0,
-      sort: true
-    },
-    headers: {
-      Referer: `https://kaspi.kz/shop/p/${Math.ceil(Math.random() * 100000)}-${sku}/?c=${cityId}`,
+      sort: true,
+      installationId: "-1",
+      zoneId: 'Magnum_ZONE1'
     },
   }).then(response => response.data as PriceListApiT & ApiError)
 }
@@ -64,6 +85,7 @@ function App() {
   const [fetchQueueState, setFetchQueueState] = useState<boolean>(false);
   const [dataToFetch, setDataToFetch] = useState<ApiRivalConfigResponseI>();
   const [dataCounter, setDataCounter] = useState<number>(0);
+  const [dataFetchState, setDataFetchState] = useState(0);
   const [selectedSellerState, setSelectedSeller] = useState<SellerInterface>({
     sysId: '',
     username: '',
@@ -119,24 +141,66 @@ function App() {
 
   async function fetchData(data: ApiRivalConfigResponseI) {
     if (data.total < 1) return;
+    let errorStatus: boolean = false
     for (const elem of data.list) {
-      const data = await getProductInfo(elem.product.sku, elem.product.sku);
-      if (data.statusCode > 399) alert(data.error);
+      setDataFetchState(1);
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(0);
+        }, 200)
+      });
+      let data: PriceListApiT & ApiError;
+      try {
+        data = await getProductInfo(elem.product.sku, elem.product.sku);
+      } catch (e) {
+        setDataFetchState(3);
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(0);
+          }, 10_000)
+        })
+        continue;
+      }
+      if (data.total === 0) {
+        errorStatus = true;
+        setDataFetchState(5);
+        break;
+      }
+      if (data.statusCode > 399) {
+        alert(data.error);
+      }
+      setDataFetchState(2);
+      try {
+        await axios.request({
+          url: `${API_URL}/update`, method: "post", data: {
+            data: data,
+            id: elem.id,
+            sellerId: selectedSellerState.id,
+            hash: appState.activationCode
+          }
+        })
+      } catch (e) {
+        setDataFetchState(3);
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(0);
+          }, 10_000)
+        })
+        continue;
+      }
 
-      await axios.request({
-        url: `${API_URL}/update`, method: "post", data: {
-          data: data,
-          id: elem.id,
-          sellerId: selectedSellerState.id,
-          hash: appState.activationCode
-        }
-      })
       setDataCounter((prev) => prev + 1);
       await new Promise((resolve) => {
         setTimeout(() => {
           resolve(0)
         }, 200)
       })
+    }
+    if (!errorStatus) {
+      setDataFetchState(3);
+      setTimeout(() => {
+        setDataFetchState(0);
+      }, 3_000)
     }
   }
 
@@ -179,13 +243,24 @@ function App() {
         </button>
       </div>
     }
+    {dataFetchState === 5 && <div>Ваши запросы были заблокированы</div>}
     {
       fetchQueueState && <div>
         <div className='info'>Идёт интеграция; Пожалуйста ждите-)</div>
         {dataToFetch?.total! > 0 && <div>
           <div>Всего {dataToFetch?.total} товаров будет обновлено))</div>
           <div style={{'color': 'green'}}>Уже обновлено {dataCounter}</div>
-        </div>}
+          {dataFetchState === 1 &&
+            <div style={{color: 'darkred'}}>Получение данных</div>}
+          {dataFetchState === 2 &&
+            <div style={{color: 'blue'}}>Отправка данных</div>}
+          {dataFetchState === 3 &&
+            <div>Возникла ошибка; через 10 секунда будет следующий цикл</div>}
+          {dataFetchState === 4 &&
+            <div style={{color: 'green'}}>Ура все данные синхронизвалсь!)</div>}
+          {dataFetchState === 5 && <div>Ваши запросы были заблокированы</div>}
+        </div>
+        }
         <LoaderComponent/>
       </div>
     }
