@@ -16,9 +16,7 @@
     "default_title": "Biy Standard",
     "default_popup": "popup.html"
   },
-  "permissions": [
-    "storage", "scripting", "tabs"
-  ],
+  "permissions": ["storage"],
   "content_scripts": [
     {
       "matches": ["https://kaspi.kz/shop/p/*"],

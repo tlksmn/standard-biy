@@ -1,4 +1,4 @@
-import axios, {AxiosHeaders, InternalAxiosRequestConfig} from "axios";
+import axios, {InternalAxiosRequestConfig} from "axios";
 import React, {
   ChangeEvent,
   FormEvent,
