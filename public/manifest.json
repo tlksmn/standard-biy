@@ -19,7 +19,7 @@
   "permissions": ["storage"],
   "content_scripts": [
     {
-      "matches": ["https://kaspi.kz/shop/p/*"],
+      "matches": ["https://kaspi.kz/shop/*"],
       "js": ["contentScript.js"],
       "css": ["style.css"]
     }
