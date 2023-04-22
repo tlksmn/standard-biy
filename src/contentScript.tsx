@@ -26,38 +26,20 @@ import {cityListConstants, KaspiPercents} from "./constats";
 export function percentInt(per: string): number {
   let temp = '';
   for (let i = 0; i < per?.length; i++) {
-    if (!isNaN(Number(per[i]))) {
-      temp = temp + per[i];
+    const model = per[i]
+    if (model === '.' || model === ',') {
+      break;
+    }
+    if (!isNaN(Number(model))) {
+      temp = temp + model;
     }
   }
   return parseInt(temp);
 }
 
-function makeId(length: number): string {
-  let result = '';
-  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789_';
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
-  }
-  return result;
-}
-
-function randomIntFromInterval(min: number, max: number): number { // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
 //--lib-start to fetch current product
 function getProductInfo(sku: string, cityId: string): Promise<PriceListApiT & ApiError> {
-  const newAxiosInstance = axios.create();
-
-  newAxiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig)=> {
-    config.headers['Referer'] =  `https://kaspi.kz/shop/p/${makeId(randomIntFromInterval(12, 22))}-${sku}/?c=${cityId}`
-    return config
-  });
-  return newAxiosInstance.request({
+  return axios.request({
     url: `https://kaspi.kz/yml/offer-view/offers/${sku}`,
     method: 'post',
     data: {
@@ -79,8 +61,14 @@ function getProductInfo(sku: string, cityId: string): Promise<PriceListApiT & Ap
  *
  *
  * */
-const API_URL: string = 'https://ext.biy.kz';
+const API_URL: string = 'https://ext.biy.kz' /*'http://localhost:3001'*/;
 const storageName: string = 'BIY_STANDARD_EXT';
+
+/***
+ *
+ *
+ * */
+
 
 function App() {
   const [fetchQueueState, setFetchQueueState] = useState<boolean>(false);
