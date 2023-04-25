@@ -1,3 +1,7 @@
+:root {
+  --border-color: rgba(67, 148, 255, 0.75);
+}
+
 #biy-ext-standard-root{
   position: fixed;
   bottom: 0;
@@ -6,7 +10,7 @@
   right: 0;
   padding: 0.4em;
   background: #f8f8f8;
-  border-left: 1px solid blue;
+  border-left: 1px solid var(--border-color);
   z-index: 99999;
   max-width: 22em;
   width: 20em;
@@ -41,18 +45,26 @@
   position: fixed;
   right: 0;
   color: #393b3b;
-  background: #f8f8f8;
-  border-left: 1px solid blue;
-  border-top: 1px solid blue;
+  background: #ffffff;
+  border-left: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-color);
   z-index: 99999;
   padding: 0.2em;
+  max-width: 30em;
 }
 
 #biy-ext-prod-calc-analyzer{
   top: 2em;
-  border-bottom: 1px solid blue;
+  border-bottom: 1px solid var(--border-color);
 }
 #biy-ext-prod-calc-analyzer .productContainer{
   display: flex;
   flex-direction: column;
+}
+#biy-ext-prod-calc-analyzer .productContainer .price-input{
+  max-width: 5em;
+  max-height: 1.8em;
+}
+#biy-ext-prod-calc-analyzer .price-list{
+  padding-top: 1em;
 }

@@ -1,4 +1,4 @@
-import axios, {InternalAxiosRequestConfig} from "axios";
+import axios from "axios";
 import React, {
   ChangeEvent,
   FormEvent,
@@ -13,7 +13,7 @@ import {
   ActivationFormProps,
   ApiError,
   ApiRivalConfigResponseI,
-  AppStateInterface, City, PercentData, PercentDataApi,
+  AppStateInterface, City, PercentData,
   PriceListApiT,
   ProductAnalyzerStateI,
   SellerInterface,
@@ -61,7 +61,8 @@ function getProductInfo(sku: string, cityId: string): Promise<PriceListApiT & Ap
  *
  *
  * */
-const API_URL: string = 'https://ext.biy.kz' /*'http://localhost:3001'*/;
+// const API_URL: string = 'http://localhost:3001';
+const API_URL: string = 'https://ext.biy.kz';
 const storageName: string = 'BIY_STANDARD_EXT';
 
 /***
@@ -405,9 +406,11 @@ function SellerComponent(props: SellerProps) {
 function ApplicationProductAnalyzer() {
   const [productState, setProductState] = useState<ProductAnalyzerStateI>();
   const [productFetchState, setFetchState] = useState<PriceListApiT>();
-  const [citySelected, setSelectedCity] = useState<string>();
+  const [citySelected, setSelectedCity] = useState<string>('');
   const [percentState, setPercent] = useState<number>(0);
+  const [tradePrice, setTradePrice] = useState<number>(1)
   const [productPriceEdit, setProductPriceEdit] = useState(0);
+  const [viewContent, setViewContent] = useState<boolean>(true)
   const percent = () => percentInt(
     KaspiPercents.percents.filter((e: PercentData) => productState?.category.includes(e[3]!))[0]?.percent ||
     KaspiPercents.percents.filter((e: PercentData) => productState?.category.includes(e[2]))[0]?.percent
@@ -447,6 +450,7 @@ function ApplicationProductAnalyzer() {
         const data = await getProductInfo(productState.productSku, productState.cityId)
         setFetchState(data);
         setProductPriceEdit(data.offers[0].price - 1);
+        setTradePrice(data.offers[0].price - 1000)
       })().then();
     }
   }, [productState])
@@ -460,6 +464,7 @@ function ApplicationProductAnalyzer() {
       const data = await getProductInfo(productState!.productSku, cityId);
       setFetchState(data);
       setProductPriceEdit(data.offers[0].price - 1);
+      setTradePrice(data.offers[0].price - 1000)
     })().then();
   }
 
@@ -467,49 +472,64 @@ function ApplicationProductAnalyzer() {
     setProductPriceEdit(+event.target.value);
   }
 
-  return <div>
-    <div className='productContainer'>
-      <div><a href="https://mp.biy.kz/auth" target="_blank">biy.kz</a> -
-        полезный инструмента для вашего бизнеса
-      </div>
-      {
-        productState?.productSku && productState?.productName && productState?.cityId &&
-        <div>
-          <div> {productState.productName} </div>
-          <div>Категория :: {productState.category.map(e => e + ' ')}</div>
-          <div>Комиссионные с продажи = {percentState}% =
-            ₸{Math.ceil((productPriceEdit / 100) * percentState)}</div>
-          <select name="citySelected" id="citySelect" onChange={onchangeSelect}
-                  value={citySelected}>
-            {
-              cityListConstants.map((e: City) => (
-                <option key={e.cityRus} value={e.id}>{e.cityRus}</option>)
-              )
-            }
-          </select>
-          <input type="number" value={productPriceEdit}
-                 onChange={onProductPriceChange}/>
-          <div>Рекомендуемая цена :: ₸{productPriceEdit} - и место в
-            списке {(productFetchState?.offers.filter(e => e.price < productPriceEdit).length)! + 1}</div>
+  return <>
+    {viewContent ? <div>
+      <div className='productContainer'>
+        <div><a href="https://mp.biy.kz/auth" target="_blank">biy.kz</a> -
+          полезный инструмента для вашего бизнеса
         </div>
-      }
-    </div>
-    <div>всего продавцов {productFetchState?.total}</div>
-    <div className='cityList'>
-      {
-        productFetchState?.offers?.map((e) => (
-          <div key={e.merchantName} className='cityElement'>
-            <div>
-              {e.merchantName} -
-              ₸{e.price} - {e.preorder} - {e.deliveryDuration} - {cityName(e.locatedInCity || e.kdDestinationCity)}
-            </div>
+        {
+          productState?.productSku && productState?.productName && productState?.cityId &&
+          <div>
+            <div> {productState.productName} </div>
+            <div>Категория :: {productState.category.map(e => e + ' ')}</div>
+            <select name="citySelected" id="citySelect"
+                    onChange={onchangeSelect}
+                    value={citySelected}>
+              {
+                cityListConstants.map((e: City) => (
+                  <option key={e.cityRus} value={e.id}>{e.cityRus}</option>)
+                )
+              }
+            </select>
+            ц<input className={'price-input'} type="number"
+                    value={productPriceEdit}
+                    onChange={onProductPriceChange}/>
+            о<input className={'price-input'} type='number' min='0'
+                    value={tradePrice}
+                    onChange={(event) => setTradePrice(+(event.target.value))}/>
+            %<input className={'price-input'} type="number" value={percentState}
+                    onChange={(event) => setPercent(+event.target.value)}/>
+            <div>Рекомендуемая цена :: ₸{productPriceEdit} - и место в
+              списке {(productFetchState?.offers.filter(e => e.price <= productPriceEdit).length)! + 1}</div>
+            <div>Оптовая цена - ₸{tradePrice}</div>
+            <div>Комиссионные с продажи = {percentState}% =
+              ₸{Math.ceil((productPriceEdit / 100) * percentState)}</div>
+            <div>Прибыль -
+              ₸{productPriceEdit - tradePrice - Math.ceil((productPriceEdit / 100) * percentState)}</div>
+            <div>всего продавцов {productFetchState?.total}</div>
           </div>
-        ))
-      }
-    </div>
-    <div>полезный инструмента для вашего бизнеса <a
-      href="https://mp.biy.kz/auth" target="_blank">biy.kz</a></div>
-  </div>
+        }
+      </div>
+      <div className='price-list'>
+        <div className='cityList'>
+          {
+            productFetchState?.offers?.map((e) => (
+              <div key={e.merchantName} className='cityElement'>
+                <div>
+                  {e.merchantName} -
+                  ₸{e.price} - {e.preorder} - {e.deliveryDuration} - {cityName(e.locatedInCity || e.kdDestinationCity)}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+      <div>полезный инструмента для вашего бизнеса - <a
+        href="https://mp.biy.kz/auth" target="_blank">biy.kz</a></div>
+      <div className={'button _red'} onClick={() => setViewContent(false)}>Закрыть</div>
+    </div> : <button className={'button'} onClick={() => setViewContent(true)}>Показать</button>
+    }</>
 }
 
 /***
