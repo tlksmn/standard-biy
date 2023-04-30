@@ -1,78 +1,78 @@
-import {Dispatch, SetStateAction} from "react";
+import { Dispatch, SetStateAction } from 'react';
 
 export interface SellerInterface {
-  sysId: string,
-  username: string,
-  id: number
+  sysId: string;
+  username: string;
+  id: number;
 }
 
 export interface AppStateInterface {
-  user: string,
-  userId: number
-  activationCode: string,
-  isActivated: boolean,
-  isAvailable: boolean,
-  sellers?: SellerInterface[],
+  user: string;
+  userId: number;
+  activationCode: string;
+  isActivated: boolean;
+  isAvailable: boolean;
+  sellers?: SellerInterface[];
 }
 
 export interface ActivationFormProps {
-  state: AppStateInterface,
-  setState: Dispatch<SetStateAction<AppStateInterface>>,
+  state: AppStateInterface;
+  setState: Dispatch<SetStateAction<AppStateInterface>>;
 }
 
 export interface SellersListProps {
-  sellers: SellerInterface[],
-  fetchState: boolean,
-  setFetchState: Dispatch<SetStateAction<boolean>>,
-  selectedSeller: SellerInterface,
-  selectSeller: Dispatch<SetStateAction<SellerInterface>>,
+  sellers: SellerInterface[];
+  fetchState: boolean;
+  setFetchState: Dispatch<SetStateAction<boolean>>;
+  selectedSeller: SellerInterface;
+  selectSeller: Dispatch<SetStateAction<SellerInterface>>;
 }
 
 export interface SellerProps {
-  seller: SellerInterface,
-  selectedSeller: SellerInterface,
-  selectSeller: Dispatch<SetStateAction<SellerInterface>>,
-  fetchState: boolean,
-  setFetchState: Dispatch<SetStateAction<boolean>>,
+  seller: SellerInterface;
+  selectedSeller: SellerInterface;
+  selectSeller: Dispatch<SetStateAction<SellerInterface>>;
+  fetchState: boolean;
+  setFetchState: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface ActivateFormData {
-  activatedCode: string,
+  activatedCode: string;
 }
 
 // @Api
 export interface ActivateApiData {
-  id: number
-  name: string
-  activated: boolean
-  sellers: SellerApiI[]
+  id: number;
+  name: string;
+  activated: boolean;
+  sellers: SellerApiI[];
 }
 
 interface SellerApiI {
-  id: number,
-  sysId: string,
-  username: string
+  id: number;
+  sysId: string;
+  username: string;
 }
 
 export interface ApiError {
-  error: string
-  message: string[]
-  statusCode: number
+  error: string;
+  message: string[];
+  statusCode: number;
 }
 
 export interface ApiRivalConfigResponseI {
-  total: number
-  list: RivalResponse[]
+  total: number;
+  list: RivalResponse[];
 }
 
 interface RivalResponse {
-  id: number
+  id: number;
   city: {
-    code: string
-  }
+    code: string;
+  };
   product: {
-    sku: string
-  }
+    sku: string;
+  };
 }
 
 export type PriceListApiT = {
@@ -118,13 +118,12 @@ export interface City {
 }
 
 export interface PercentData {
-  "1": string,
-  "2": string
-  "3"?: string
-  percent: string
+  '1': string;
+  '2': string;
+  '3'?: string;
+  percent: string;
 }
 
 export interface PercentDataApi {
-  percents: PercentData[]
+  percents: PercentData[];
 }
-

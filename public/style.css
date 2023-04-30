@@ -2,7 +2,7 @@
   --border-color: rgba(67, 148, 255, 0.75);
 }
 
-#biy-ext-standard-root{
+#biy-ext-standard-root {
   position: fixed;
   bottom: 0;
   overflow-x: auto;
@@ -17,18 +17,18 @@
   height: 19em;
   max-height: 20em;
 }
-#biy-ext-standard-root #app .error{
+#biy-ext-standard-root #app .error {
   color: red;
   padding: 0;
   background: none;
 }
-#biy-ext-standard-root #app .info{
+#biy-ext-standard-root #app .info {
   color: blue;
   text-decoration: underline;
   padding-top: 0.8em;
 }
 
-#biy-ext-standard-root #app .seller-list-container{
+#biy-ext-standard-root #app .seller-list-container {
   padding-bottom: 1em;
   display: flex;
   flex-direction: row;
@@ -36,12 +36,12 @@
   gap: 0.5em;
 }
 
-#biy-ext-root #app .loader svg{
-  width:10em;
-  height:6em;
+#biy-ext-root #app .loader svg {
+  width: 10em;
+  height: 6em;
 }
 
-.ext{
+.ext {
   position: fixed;
   right: 0;
   color: #393b3b;
@@ -53,18 +53,18 @@
   max-width: 30em;
 }
 
-#biy-ext-prod-calc-analyzer{
+#biy-ext-prod-calc-analyzer {
   top: 2em;
   border-bottom: 1px solid var(--border-color);
 }
-#biy-ext-prod-calc-analyzer .productContainer{
+#biy-ext-prod-calc-analyzer .productContainer {
   display: flex;
   flex-direction: column;
 }
-#biy-ext-prod-calc-analyzer .productContainer .price-input{
+#biy-ext-prod-calc-analyzer .productContainer .price-input {
   max-width: 5em;
   max-height: 1.8em;
 }
-#biy-ext-prod-calc-analyzer .price-list{
+#biy-ext-prod-calc-analyzer .price-list {
   padding-top: 1em;
 }
