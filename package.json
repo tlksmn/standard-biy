@@ -1,8 +1,9 @@
 {
   "name": "biy-standard",
-  "version": "0.1.0-build",
-  "description": "My Chrome Extension",
-  "private": true,
+  "version": "0.1.0",
+  "description": "Biy Standard chrome extension",
+  "private": false,
+  "author":"Shakhan Abdiev",
   "scripts": {
     "watch": "webpack --mode=development --watch --config config/webpack.config.js",
     "build": "webpack --mode=production --config config/webpack.config.js",
